@@ -27,7 +27,7 @@ RUN mkdir -p /var/cache/nginx/client_temp && \
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port 80
-EXPOSE 80
-
-# Start nginx server in the foreground
+EXPOSE 8080
+RUN sed -i 's/80/8080/g' /etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]
+
