@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM node:14-alpine
+FROM node:14-alpine AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -19,8 +19,12 @@ RUN npm run build
 # Serve the React app using a lightweight HTTP server
 FROM nginx:alpine
 
+# Ensure permissions for /var/cache/nginx (required for Nginx on some systems)
+RUN mkdir -p /var/cache/nginx/client_temp && \
+    chmod -R 777 /var/cache/nginx
+
 # Copy the build output from the previous stage to the nginx HTML directory
-COPY --from=0 /app/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
